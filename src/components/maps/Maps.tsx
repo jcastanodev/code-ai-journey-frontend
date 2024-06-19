@@ -8,6 +8,7 @@ import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
 
 // Replace with your Google Maps API key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
+console.log("GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY);
 
 export function Maps() {
 	const dispatch = useAppDispatch();
