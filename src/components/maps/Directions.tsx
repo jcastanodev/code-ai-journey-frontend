@@ -27,7 +27,11 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 	// Use directions service
 	useEffect(() => {
 		console.log("update directions");
-		if (!directionsService || !directionsRenderer || !from || !to) return;
+		if (!directionsService || !directionsRenderer) return;
+		if (!from || !to) {
+			directionsRenderer.set("directions", null);
+			return;
+		}
 		const waypts: google.maps.DirectionsWaypoint[] = [];
 		waypoints?.forEach((waypoint) => {
 			if (waypoint) waypts.push({ location: waypoint.geometry!.location, stopover: true });
@@ -45,8 +49,6 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 				directionsRenderer.setDirections(response);
 				setRoutes(response.routes);
 			});
-
-		// return () => directionsRenderer.setMap(null);
 	}, [directionsService, directionsRenderer, from, to, waypoints]);
 
 	// Update direction route
@@ -58,15 +60,15 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 	if (!leg) return null;
 
 	return (
-		<div className="absolute bottom-0 left-0 right-0 bg-black/50 p-4">
-			<h2>{selected.summary}</h2>
+		<div className="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-white">
+			<h2 className="text-white">{selected.summary}</h2>
 			<p>
 				{leg.start_address.split(",")[0]} to {leg.end_address.split(",")[0]}
 			</p>
 			<p>Distance: {leg.distance?.text}</p>
 			<p>Duration: {leg.duration?.text}</p>
 
-			<h2>Other Routes</h2>
+			<h2 className="text-white">Other Routes</h2>
 			<ul>
 				{routes.map((route, index) => (
 					<li key={route.summary}>

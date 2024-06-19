@@ -38,14 +38,14 @@ export function Maps() {
 			zoom: 12,
 		});
 		console.log(place);
-		if (editFrom) {
-			setEditFrom(false);
-			dispatch(setFrom(place));
-			return;
-		}
-		if (editTo) {
+		if (editTo || toPlace === null) {
 			setEditTo(false);
 			dispatch(setTo(place));
+			return;
+		}
+		if (editFrom || fromPlace === null) {
+			setEditFrom(false);
+			dispatch(setFrom(place));
 			return;
 		}
 		if (editWaypointIndex !== null) {
@@ -114,7 +114,7 @@ export function Maps() {
 					<Search
 						searchValue={searchValue}
 						setSearchValue={setSearchValue}
-						placeholder={"Search for a place?"}
+						placeholder={"Search a place?"}
 						onPlaceSelect={onPlaceSelect}
 					/>
 					<BreadcrumbBar
