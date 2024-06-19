@@ -1,0 +1,14 @@
+{
+	"start": "Start",
+	"explore": "Explore",
+	"account": "Account",
+	"welcomeMessage": "Welcome to CodeAIJourney, where the journey of exploration in the world of artificial intelligence begins. We are a pioneering initiative dedicated to unraveling the mysteries and infinite possibilities of AI. Our goal is to deliver innovative AI solutions, share knowledge through interactive learning, and connect enthusiasts and professionals through a global network.",
+	"tools": "Tools",
+	"goToBusiness": "Go To Business",
+	"goToChatBot": "Go To ChatBot",
+	"yourChatBots": "Your ChatBots",
+	"newChatBot": "New ChatBot",
+	"whatWantChatbot": "What you want with your ChatBot",
+	"uploadFileForFAQ": "For config the ChatBot, please upload a PDF file with FAQs",
+	"uploadPDF": "Upload PDF"
+}
