@@ -14,7 +14,7 @@ export function Maps() {
 	const dispatch = useAppDispatch();
 	// TODO: const isDarkMode = useAppSelector((state) => state.appSetting.isDarkMode);
 	const INITIAL_CAMERA = {
-		center: { lat: 43.65, lng: -79.38 }, //{ lat: 4.7, lng: -74.063644 },
+		center: { lat: 4.7, lng: -74.063644 },
 		zoom: 12,
 	};
 	const [cameraProps, setCameraProps] = useState<MapCameraProps>(INITIAL_CAMERA);
