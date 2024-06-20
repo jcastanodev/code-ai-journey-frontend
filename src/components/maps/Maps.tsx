@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { APIProvider, Map, MapCameraChangedEvent, MapCameraProps } from "@vis.gl/react-google-maps";
 import { Directions } from "./Directions";
 import { Search } from "./Search";
@@ -8,8 +8,8 @@ import { setFrom, setTo, setWaypoints, setMapRoutes } from "@store/reducers/Maps
 import { SavedRoutes } from "./SavedRoutes";
 import { PlaceInterface } from "@interfaces/MapsInterface";
 
-// Replace with your Google Maps API key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
+const APP_URL = import.meta.env.VITE_APP_URL ?? "";
 
 export function Maps() {
 	const dispatch = useAppDispatch();
@@ -134,6 +134,16 @@ export function Maps() {
 		);
 	};
 
+	const shareSavedRoute = (index: number) => {
+		const tempRoutes = routes[index];
+		let routesParam = "";
+		tempRoutes.forEach((element, index) => {
+			console.log(element);
+			routesParam += element.place_id + (tempRoutes.length - 1 === index ? "" : "|");
+		});
+		navigator.clipboard.writeText(`${APP_URL}/maps?routes=${routesParam}`);
+	};
+
 	const clearRoute = () => {
 		dispatch(setWaypoints([]));
 		dispatch(setTo(null));
@@ -191,6 +201,7 @@ export function Maps() {
 						routes={routes}
 						onSelectSavedRoute={restoreSavedRoute}
 						onDeleteSavedRoute={deleteSavedRoute}
+						onShareSavedRoute={shareSavedRoute}
 					/>
 					<Directions from={fromPlace} to={toPlace} />
 				</Map>

@@ -3,6 +3,8 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { PlaceInterface } from "@interfaces/MapsInterface";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
 
 interface Props {
 	searchValue: string;
@@ -22,8 +24,10 @@ export const Search = ({
 	toggleShowSavedRoutes,
 	routes,
 }: Props) => {
+	const dispatch = useAppDispatch();
 	const map = useMap();
 	const places = useMapsLibrary("places");
+	const waypoints = useAppSelector((state) => state.maps.currentRoute!.waypoints);
 
 	// https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompleteSessionToken
 	const [sessionToken, setSessionToken] = useState<google.maps.places.AutocompleteSessionToken>();
@@ -48,6 +52,56 @@ export const Search = ({
 
 		return () => setAutocompleteService(null);
 	}, [map, places]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const routesParam = params.get("routes");
+		if (routesParam) {
+			const tempRoutes = routesParam.split("|");
+			console.log(tempRoutes);
+			initRoutes(tempRoutes);
+		}
+	}, [placesService, sessionToken]);
+
+	const initRoutes = async (routes: string[]) => {
+		console.log("routes", routes);
+		dispatch(setWaypoints([]));
+		routes.forEach((route, index) => {
+			console.log("index", index);
+			const detailRequestOptions = {
+				placeId: route,
+				fields: ["geometry", "name", "formatted_address"],
+				sessionToken,
+			};
+
+			const detailsRequestCallback = (placeDetails: google.maps.places.PlaceResult | null) => {
+				console.log("placeDetails", placeDetails);
+				const place = {
+					location: {
+						lat: placeDetails?.geometry?.location?.lat()!,
+						lng: placeDetails?.geometry?.location?.lng()!,
+					},
+					name: placeDetails?.name ?? "",
+					address: placeDetails?.formatted_address ?? "",
+					place_id: route,
+				} as PlaceInterface;
+				if (index === 0) {
+					console.log("setFrom", place);
+					dispatch(setFrom(place));
+					return;
+				}
+				if (index === routes.length - 1) {
+					console.log("setTo", place);
+					dispatch(setTo(place));
+					window.location.href = window.location.href.split("?")[0];
+					return;
+				}
+				dispatch(setWaypoints([...waypoints, place]));
+			};
+
+			placesService?.getDetails(detailRequestOptions, detailsRequestCallback);
+		});
+	};
 
 	const fetchPredictions = useCallback(
 		async (searchValue: string) => {
