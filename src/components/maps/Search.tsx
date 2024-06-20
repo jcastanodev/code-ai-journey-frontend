@@ -66,7 +66,8 @@ export const Search = ({
 	const initRoutes = async (routes: string[]) => {
 		console.log("routes", routes);
 		dispatch(setWaypoints([]));
-		routes.forEach((route, index) => {
+		let tempWaypoints: PlaceInterface[] = [];
+		routes.forEach(async (route, index) => {
 			console.log("index", index);
 			const detailRequestOptions = {
 				placeId: route,
@@ -74,32 +75,39 @@ export const Search = ({
 				sessionToken,
 			};
 
-			const detailsRequestCallback = (placeDetails: google.maps.places.PlaceResult | null) => {
-				console.log("placeDetails", placeDetails);
-				const place = {
-					location: {
-						lat: placeDetails?.geometry?.location?.lat()!,
-						lng: placeDetails?.geometry?.location?.lng()!,
-					},
-					name: placeDetails?.name ?? "",
-					address: placeDetails?.formatted_address ?? "",
-					place_id: route,
-				} as PlaceInterface;
-				if (index === 0) {
-					console.log("setFrom", place);
-					dispatch(setFrom(place));
-					return;
-				}
-				if (index === routes.length - 1) {
-					console.log("setTo", place);
-					dispatch(setTo(place));
-					window.location.href = window.location.href.split("?")[0];
-					return;
-				}
-				dispatch(setWaypoints([...waypoints, place]));
-			};
-
-			placesService?.getDetails(detailRequestOptions, detailsRequestCallback);
+			await (function () {
+				return new Promise((resolve, reject) => {
+					placesService?.getDetails(
+						detailRequestOptions,
+						(placeDetails: google.maps.places.PlaceResult | null) => {
+							console.log("placeDetails", placeDetails);
+							const place = {
+								location: {
+									lat: placeDetails?.geometry?.location?.lat()!,
+									lng: placeDetails?.geometry?.location?.lng()!,
+								},
+								name: placeDetails?.name ?? "",
+								address: placeDetails?.formatted_address ?? "",
+								place_id: route,
+							} as PlaceInterface;
+							if (index === 0) {
+								console.log("setFrom", place);
+								dispatch(setFrom(place));
+								return;
+							}
+							if (index === routes.length - 1) {
+								console.log("setTo", place);
+								dispatch(setTo(place));
+								dispatch(setWaypoints(tempWaypoints));
+								window.location.href = window.location.href.split("?")[0];
+								resolve(true);
+								return;
+							}
+							tempWaypoints.push(place);
+						}
+					);
+				});
+			})();
 		});
 	};
 
