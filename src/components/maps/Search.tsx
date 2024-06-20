@@ -1,13 +1,27 @@
 import React, { useEffect, useState, useCallback, FormEvent } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { PlaceInterface } from "@interfaces/MapsInterface";
 
 interface Props {
 	searchValue: string;
 	setSearchValue: React.Dispatch<React.SetStateAction<string>>;
 	placeholder?: string;
-	onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+	onPlaceSelect: (place: PlaceInterface | null) => void;
+	showSavedRoutes: boolean;
+	toggleShowSavedRoutes: VoidFunction;
+	routes: PlaceInterface[][];
 }
-export const Search = ({ placeholder, onPlaceSelect, searchValue, setSearchValue }: Props) => {
+export const Search = ({
+	placeholder,
+	onPlaceSelect,
+	searchValue,
+	setSearchValue,
+	showSavedRoutes,
+	toggleShowSavedRoutes,
+	routes,
+}: Props) => {
 	const map = useMap();
 	const places = useMapsLibrary("places");
 
@@ -72,7 +86,15 @@ export const Search = ({ placeholder, onPlaceSelect, searchValue, setSearchValue
 
 			const detailsRequestCallback = (placeDetails: google.maps.places.PlaceResult | null) => {
 				console.log("placeDetails", placeDetails);
-				onPlaceSelect(placeDetails);
+				onPlaceSelect({
+					location: {
+						lat: placeDetails?.geometry?.location?.lat()!,
+						lng: placeDetails?.geometry?.location?.lng()!,
+					},
+					name: placeDetails?.name ?? "",
+					address: placeDetails?.formatted_address ?? "",
+					place_id: placeId,
+				});
 				setPredictionResults([]);
 				setSearchValue(""); // setSearchValue(placeDetails?.formatted_address ?? "");
 				setSessionToken(new places.AutocompleteSessionToken());
@@ -85,7 +107,7 @@ export const Search = ({ placeholder, onPlaceSelect, searchValue, setSearchValue
 
 	return (
 		<div className="absolute top-0 left-0 right-0 bg-black/50 z-50 flex justify-center">
-			<div className="w-4/5 sm:w-2/3 lg:w-1/3">
+			<div className="w-full">
 				<input
 					className="w-full p-2 text-black rounded-xl border-black border text-center"
 					value={searchValue}
@@ -108,6 +130,20 @@ export const Search = ({ placeholder, onPlaceSelect, searchValue, setSearchValue
 						})}
 					</ul>
 				)}
+			</div>
+			<div className="w-auto">
+				<button
+					className="w-full p-2 text-white text-center whitespace-nowrap"
+					onClick={toggleShowSavedRoutes}
+				>
+					{!showSavedRoutes && (
+						<FontAwesomeIcon icon={faCaretRight} size="xl" className="text-white" />
+					)}
+					{showSavedRoutes && (
+						<FontAwesomeIcon icon={faCaretDown} size="xl" className="text-white" />
+					)}
+					<span className="ml-2">Saved Routes ({routes.length})</span>
+				</button>
 			</div>
 		</div>
 	);

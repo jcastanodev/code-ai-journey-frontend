@@ -3,7 +3,20 @@ export interface MapsStateInterface {
 }
 
 export interface MapsRouteInterface {
-    from: google.maps.places.PlaceResult | null;
-    to: google.maps.places.PlaceResult | null;
-    waypoints: (google.maps.places.PlaceResult | null)[];
+    from: PlaceInterface | null;
+    to: PlaceInterface | null;
+    waypoints: (PlaceInterface | null)[];
+    routes: (PlaceInterface[])[];
+}
+
+export interface PlaceInterface {
+    place_id: string;
+    name: string;
+    address: string;
+    location: LocationInterface;
+}
+
+export interface LocationInterface {
+    lat: number;
+    lng: number;
 }

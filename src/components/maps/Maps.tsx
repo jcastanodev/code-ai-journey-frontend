@@ -4,11 +4,12 @@ import { Directions } from "./Directions";
 import { Search } from "./Search";
 import { BreadcrumbBar } from "./BreadcrumbBar";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
+import { setFrom, setTo, setWaypoints, setMapRoutes } from "@store/reducers/MapsReducer";
+import { SavedRoutes } from "./SavedRoutes";
+import { PlaceInterface } from "@interfaces/MapsInterface";
 
 // Replace with your Google Maps API key
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
-console.log("GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY);
 
 export function Maps() {
 	const dispatch = useAppDispatch();
@@ -24,16 +25,18 @@ export function Maps() {
 	const fromPlace = useAppSelector((state) => state.maps.currentRoute!.from);
 	const toPlace = useAppSelector((state) => state.maps.currentRoute!.to);
 	const waypoints = useAppSelector((state) => state.maps.currentRoute!.waypoints);
+	const routes = useAppSelector((state) => state.maps.currentRoute!.routes);
 	const [searchValue, setSearchValue] = useState<string>("");
 	const [editFrom, setEditFrom] = useState<boolean>(false);
 	const [editTo, setEditTo] = useState<boolean>(false);
 	const [editWaypointIndex, setEditWaypointIndex] = useState<number | null>(null);
+	const [showSavedRoutes, setShowSavedRoutes] = useState<boolean>(false);
 
-	const onPlaceSelect = (place: google.maps.places.PlaceResult | null) => {
+	const onPlaceSelect = (place: PlaceInterface | null) => {
 		setCameraProps({
 			center: {
-				lat: place?.geometry?.location?.lat() ?? 43.65,
-				lng: place?.geometry?.location?.lng() ?? -79.38,
+				lat: place?.location?.lat ?? 43.65,
+				lng: place?.location?.lng ?? -79.38,
 			},
 			zoom: 12,
 		});
@@ -100,6 +103,46 @@ export function Maps() {
 		);
 	};
 
+	const saveRoute = () => {
+		console.log(routes);
+		dispatch(
+			setMapRoutes(
+				routes
+					? [[fromPlace!, ...waypoints.filter((element) => element !== null), toPlace!], ...routes]
+					: [[fromPlace!, ...waypoints.filter((element) => element !== null), toPlace!]]
+			)
+		);
+		clearRoute();
+	};
+
+	const restoreSavedRoute = (savedRoute: PlaceInterface[]) => {
+		dispatch(setWaypoints(savedRoute.slice(1, savedRoute.length - 1)));
+		dispatch(setTo(savedRoute[savedRoute.length - 1]));
+		dispatch(setFrom(savedRoute[0]));
+		setEditFrom(false);
+		setEditTo(false);
+		setEditWaypointIndex(null);
+	};
+
+	const deleteSavedRoute = (index: number) => {
+		dispatch(
+			setMapRoutes(
+				routes.length > index + 1
+					? [...routes.slice(0, index), ...routes.slice(index + 1)]
+					: [...routes.slice(0, index)]
+			)
+		);
+	};
+
+	const clearRoute = () => {
+		dispatch(setWaypoints([]));
+		dispatch(setTo(null));
+		dispatch(setFrom(null));
+		setEditFrom(false);
+		setEditTo(false);
+		setEditWaypointIndex(null);
+	};
+
 	return (
 		<div className="w-full h-full relative">
 			<APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
@@ -116,6 +159,11 @@ export function Maps() {
 						setSearchValue={setSearchValue}
 						placeholder={"Search a place?"}
 						onPlaceSelect={onPlaceSelect}
+						showSavedRoutes={showSavedRoutes}
+						toggleShowSavedRoutes={() => {
+							setShowSavedRoutes(!showSavedRoutes);
+						}}
+						routes={routes}
 					/>
 					<BreadcrumbBar
 						from={fromPlace}
@@ -136,8 +184,15 @@ export function Maps() {
 						addWaypoint={addWaypoint}
 						editWaypoint={editWaypoint}
 						deleteWaypoint={deleteWaypoint}
+						saveRoute={saveRoute}
 					/>
-					<Directions from={fromPlace} to={toPlace} waypoints={waypoints} />
+					<SavedRoutes
+						showSavedRoutes={showSavedRoutes}
+						routes={routes}
+						onSelectSavedRoute={restoreSavedRoute}
+						onDeleteSavedRoute={deleteSavedRoute}
+					/>
+					<Directions from={fromPlace} to={toPlace} />
 				</Map>
 			</APIProvider>
 		</div>

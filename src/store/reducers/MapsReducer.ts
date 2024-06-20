@@ -7,6 +7,7 @@ const initialState: MapsStateInterface = {
         from: null,
         to: null,
         waypoints: [],
+        routes: [],
     },
 };
 
@@ -26,9 +27,13 @@ export const MapsSlice = createSlice({
             logger.debug("setWaypoints: ", action.payload);
             state.currentRoute!.waypoints = action.payload;
         },
+        setMapRoutes: (state, action: PayloadAction<(google.maps.places.PlaceResult[])[]>) => {
+            logger.debug("setMapRoutes: ", action.payload);
+            state.currentRoute!.routes = action.payload;
+        },
     },
 });
 
-export const { setFrom, setTo, setWaypoints } = MapsSlice.actions;
+export const { setFrom, setTo, setWaypoints, setMapRoutes } = MapsSlice.actions;
 
 export default MapsSlice.reducer;

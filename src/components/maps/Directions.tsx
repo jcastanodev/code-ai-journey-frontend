@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useAppSelector } from "@store/hooks";
+import { PlaceInterface } from "@interfaces/MapsInterface";
 
 interface Props {
-	from: google.maps.places.PlaceResult | null;
-	to: google.maps.places.PlaceResult | null;
+	from: PlaceInterface | null;
+	to: PlaceInterface | null;
 }
 export function Directions({ from = null, to = null }: Readonly<Props>) {
 	const waypoints = useAppSelector((state) => state.maps.currentRoute!.waypoints);
@@ -34,18 +35,19 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 		}
 		const waypts: google.maps.DirectionsWaypoint[] = [];
 		waypoints?.forEach((waypoint) => {
-			if (waypoint) waypts.push({ location: waypoint.geometry!.location, stopover: true });
+			if (waypoint) waypts.push({ location: waypoint.location, stopover: true });
 		});
 		directionsService
 			.route({
-				origin: from?.geometry?.location!,
-				destination: to?.geometry?.location!,
+				origin: from?.location,
+				destination: to?.location,
 				waypoints: waypts,
 				travelMode: google.maps.TravelMode.DRIVING,
 				provideRouteAlternatives: true,
 			})
 			.then((response) => {
 				console.log("directionsService", response);
+				directionsRenderer.set("directions", null);
 				directionsRenderer.setDirections(response);
 				setRoutes(response.routes);
 			});

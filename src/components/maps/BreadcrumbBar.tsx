@@ -2,16 +2,20 @@ import { BreadcrumbItem } from "./BreadcrumbItem";
 import { BreadcrumbArrow } from "./BreadcrumbArrow";
 import { useAppDispatch } from "@store/hooks";
 import { setFrom, setTo } from "@store/reducers/MapsReducer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { PlaceInterface } from "@interfaces/MapsInterface";
 
 interface Props {
-	from: google.maps.places.PlaceResult | null;
-	to: google.maps.places.PlaceResult | null;
+	from: PlaceInterface | null;
+	to: PlaceInterface | null;
 	onEditFrom: VoidFunction;
 	onEditTo: VoidFunction;
-	waypoints: (google.maps.places.PlaceResult | null)[];
+	waypoints: (PlaceInterface | null)[];
 	addWaypoint: (index: number) => void;
 	editWaypoint: (index: number) => void;
 	deleteWaypoint: (index: number) => void;
+	saveRoute: VoidFunction;
 }
 export function BreadcrumbBar({
 	from = null,
@@ -22,12 +26,17 @@ export function BreadcrumbBar({
 	addWaypoint,
 	editWaypoint,
 	deleteWaypoint,
+	saveRoute,
 }: Readonly<Props>) {
 	const dispatch = useAppDispatch();
 	return (
-		<div className="absolute top-12 left-0 right-0 flex justify-center items-center z-10">
+		<div
+			key={"breadcrumb"}
+			className="absolute top-12 left-0 right-0 flex flex-wrap justify-center items-center z-10"
+		>
 			<BreadcrumbItem
-				label={!from ? "from" : from.name!}
+				key={"fromItem"}
+				label={!from ? "from" : from.name}
 				onEdit={() => {
 					onEditFrom();
 				}}
@@ -36,16 +45,17 @@ export function BreadcrumbBar({
 				}}
 			/>
 			<BreadcrumbArrow
+				key={"firstArrow"}
 				onClick={() => {
 					addWaypoint(0);
 				}}
 			/>
 			{waypoints.map((waypoint, index) => {
 				return waypoint != null ? (
-					<>
+					<div key={`waypoint-${waypoint.place_id}`} className="flex">
 						<BreadcrumbItem
-							key={index}
-							label={waypoint.name!}
+							key={`item-${waypoint.place_id}`}
+							label={waypoint.name}
 							onEdit={() => {
 								editWaypoint(index);
 							}}
@@ -54,15 +64,16 @@ export function BreadcrumbBar({
 							}}
 						/>
 						<BreadcrumbArrow
+							key={`arrow-${waypoint.place_id}`}
 							onClick={() => {
 								addWaypoint(index + 1);
 							}}
 						/>
-					</>
+					</div>
 				) : (
-					<>
+					<div key="waypoint-new" className="flex">
 						<BreadcrumbItem
-							key={index}
+							key="item-new"
 							label={"new"}
 							onEdit={() => {
 								editWaypoint(index);
@@ -72,20 +83,31 @@ export function BreadcrumbBar({
 							}}
 						/>
 						<BreadcrumbArrow
+							key="arrow-new"
 							onClick={() => {
 								addWaypoint(index + 1);
 							}}
 						/>
-					</>
+					</div>
 				);
 			})}
 			<BreadcrumbItem
-				label={!to ? "to" : to.name!}
+				key={"toItem"}
+				label={!to ? "to" : to.name}
 				onEdit={() => {
 					onEditTo();
 				}}
 				onDelete={() => {
 					dispatch(setTo(null));
+				}}
+			/>
+			<FontAwesomeIcon
+				key={"save"}
+				icon={faSave}
+				size="xl"
+				className="text-black bg-white/75 rounded-full p-2 w-fit ml-4 cursor-pointer hover:bg-primary-dark/50"
+				onClick={() => {
+					saveRoute();
 				}}
 			/>
 		</div>
