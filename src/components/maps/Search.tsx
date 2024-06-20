@@ -67,7 +67,8 @@ export const Search = ({
 		console.log("routes", routes);
 		dispatch(setWaypoints([]));
 		let tempWaypoints: PlaceInterface[] = [];
-		routes.forEach(async (route, index) => {
+		for (let index = 0; index < routes.length; index++) {
+			const route = routes[index];
 			console.log("index", index);
 			const detailRequestOptions = {
 				placeId: route,
@@ -76,7 +77,7 @@ export const Search = ({
 			};
 
 			await (function () {
-				return new Promise((resolve, reject) => {
+				return new Promise<PlaceInterface>((resolve, reject) => {
 					placesService?.getDetails(
 						detailRequestOptions,
 						(placeDetails: google.maps.places.PlaceResult | null) => {
@@ -90,25 +91,27 @@ export const Search = ({
 								address: placeDetails?.formatted_address ?? "",
 								place_id: route,
 							} as PlaceInterface;
-							if (index === 0) {
-								console.log("setFrom", place);
-								dispatch(setFrom(place));
-								return;
-							}
-							if (index === routes.length - 1) {
-								console.log("setTo", place);
-								dispatch(setTo(place));
-								dispatch(setWaypoints(tempWaypoints));
-								window.location.href = window.location.href.split("?")[0];
-								resolve(true);
-								return;
-							}
-							tempWaypoints.push(place);
+							resolve(place);
 						}
 					);
 				});
-			})();
-		});
+			})().then((place) => {
+				if (index === 0) {
+					console.log("setFrom", place);
+					dispatch(setFrom(place));
+					return;
+				}
+				if (index === routes.length - 1) {
+					console.log("setTo", place);
+					dispatch(setTo(place));
+					window.location.href = window.location.href.split("?")[0];
+					return;
+				}
+				tempWaypoints = [...tempWaypoints, place];
+			});
+		}
+		console.log("tempWaypoints", tempWaypoints);
+		dispatch(setWaypoints(tempWaypoints));
 	};
 
 	const fetchPredictions = useCallback(
