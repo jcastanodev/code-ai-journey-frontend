@@ -3,7 +3,7 @@ import { BreadcrumbArrow } from "./BreadcrumbArrow";
 import { useAppDispatch } from "@store/hooks";
 import { setFrom, setTo } from "@store/reducers/MapsReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { PlaceInterface } from "@interfaces/MapsInterface";
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
 	editWaypoint: (index: number) => void;
 	deleteWaypoint: (index: number) => void;
 	saveRoute: VoidFunction;
+	resetRoute: VoidFunction;
 }
 export function BreadcrumbBar({
 	from = null,
@@ -27,6 +28,7 @@ export function BreadcrumbBar({
 	editWaypoint,
 	deleteWaypoint,
 	saveRoute,
+	resetRoute,
 }: Readonly<Props>) {
 	const dispatch = useAppDispatch();
 	return (
@@ -108,6 +110,15 @@ export function BreadcrumbBar({
 				className="text-black bg-white/75 rounded-full p-2 w-fit ml-4 cursor-pointer hover:bg-primary-dark/50"
 				onClick={() => {
 					saveRoute();
+				}}
+			/>
+			<FontAwesomeIcon
+				key={"reset"}
+				icon={faTrash}
+				size="xl"
+				className="text-black bg-white/75 rounded-full p-2 w-fit ml-2 cursor-pointer hover:bg-red-500/50"
+				onClick={() => {
+					resetRoute();
 				}}
 			/>
 		</div>
