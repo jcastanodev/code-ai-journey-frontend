@@ -3,8 +3,9 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { PlaceInterface } from "@interfaces/MapsInterface";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { useAppDispatch } from "@store/hooks";
 import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
+import { toast } from "react-toastify";
 
 interface Props {
 	searchValue: string;
@@ -25,9 +26,10 @@ export const Search = ({
 	routes,
 }: Props) => {
 	const dispatch = useAppDispatch();
+	const notifyUrlParamSuccess = () => toast.info("Load shared route!", { autoClose: 3000 });
+	const notifyUrlParamError = () => toast.error("Can't load shared route!", { autoClose: 3000 });
 	const map = useMap();
 	const places = useMapsLibrary("places");
-	const waypoints = useAppSelector((state) => state.maps.currentRoute!.waypoints);
 
 	// https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompleteSessionToken
 	const [sessionToken, setSessionToken] = useState<google.maps.places.AutocompleteSessionToken>();
@@ -64,12 +66,11 @@ export const Search = ({
 	}, [placesService, sessionToken]);
 
 	const initRoutes = async (routes: string[]) => {
-		console.log("routes", routes);
-		dispatch(setWaypoints([]));
+		let fromPlace: PlaceInterface | null = null;
+		let toPlace: PlaceInterface | null = null;
 		let tempWaypoints: PlaceInterface[] = [];
 		for (let index = 0; index < routes.length; index++) {
 			const route = routes[index];
-			console.log("index", index);
 			const detailRequestOptions = {
 				placeId: route,
 				fields: ["geometry", "name", "formatted_address"],
@@ -81,7 +82,6 @@ export const Search = ({
 					placesService?.getDetails(
 						detailRequestOptions,
 						(placeDetails: google.maps.places.PlaceResult | null) => {
-							console.log("placeDetails", placeDetails);
 							const place = {
 								location: {
 									lat: placeDetails?.geometry?.location?.lat()!,
@@ -97,21 +97,28 @@ export const Search = ({
 				});
 			})().then((place) => {
 				if (index === 0) {
-					console.log("setFrom", place);
-					dispatch(setFrom(place));
+					fromPlace = place;
 					return;
 				}
 				if (index === routes.length - 1) {
-					console.log("setTo", place);
-					dispatch(setTo(place));
-					window.location.href = window.location.href.split("?")[0];
+					toPlace = place;
 					return;
 				}
 				tempWaypoints = [...tempWaypoints, place];
 			});
 		}
-		console.log("tempWaypoints", tempWaypoints);
-		dispatch(setWaypoints(tempWaypoints));
+		if (fromPlace && toPlace) {
+			dispatch(setFrom(fromPlace));
+			dispatch(setTo(toPlace));
+			dispatch(setWaypoints(tempWaypoints));
+			notifyUrlParamSuccess();
+		} else {
+			dispatch(setFrom(null));
+			dispatch(setTo(null));
+			dispatch(setWaypoints([]));
+			notifyUrlParamError();
+		}
+		history.pushState(null, "", window.location.href.split("?")[0]);
 	};
 
 	const fetchPredictions = useCallback(
@@ -161,7 +168,7 @@ export const Search = ({
 					place_id: placeId,
 				});
 				setPredictionResults([]);
-				setSearchValue(""); // setSearchValue(placeDetails?.formatted_address ?? "");
+				setSearchValue("");
 				setSessionToken(new places.AutocompleteSessionToken());
 			};
 
@@ -207,7 +214,7 @@ export const Search = ({
 					{showSavedRoutes && (
 						<FontAwesomeIcon icon={faCaretDown} size="xl" className="text-white" />
 					)}
-					<span className="ml-2">Saved Routes ({routes.length})</span>
+					<span className="ml-2">Saved Routes ({routes?.length ?? 0})</span>
 				</button>
 			</div>
 		</div>

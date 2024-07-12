@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { APIProvider, Map, MapCameraChangedEvent, MapCameraProps } from "@vis.gl/react-google-maps";
 import { Directions } from "./Directions";
 import { Search } from "./Search";
@@ -33,13 +33,15 @@ export function Maps() {
 	const [showSavedRoutes, setShowSavedRoutes] = useState<boolean>(false);
 
 	const onPlaceSelect = (place: PlaceInterface | null) => {
-		setCameraProps({
-			center: {
-				lat: place?.location?.lat ?? 43.65,
-				lng: place?.location?.lng ?? -79.38,
-			},
-			zoom: 12,
-		});
+		if (place !== null) {
+			setCameraProps({
+				center: {
+					lat: place?.location?.lat ?? 43.65,
+					lng: place?.location?.lng ?? -79.38,
+				},
+				zoom: 12,
+			});
+		}
 		console.log(place);
 		if (editTo || toPlace === null) {
 			setEditTo(false);
