@@ -1,33 +1,83 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
-import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-
-import { useAppDispatch } from "@store/hooks";
-import { signInAccount } from "@store/reducers/accountReducer";
-import { SignInRequestInterface } from "@interfaces/account/SignInRequestInterface";
-import { logger } from "@utils/logger";
-import { CustomButton } from "@components/common/material-ui/CustomButton";
-import { CustomCheckbox } from "@components/common/material-ui/CustomCheckbox";
-import { CustomInput } from "@components/common/material-ui/CustomInput";
-
-type SignInFormProps = {
-	unauthorizedRoute?: string;
-};
+import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { insertChip, newGame } from "@store/reducers/ConnectFourReducer";
 
 export function ConnectFour() {
-	const ref = useRef(null);
-  
-	const [width, setWidth] = useState(0);
-	const [height, setHeight] = useState(0);
-
-	useLayoutEffect(() => {
-		const { currentWidth, currentHeight } = ref.current;
-		setWidth(currentWidth);
-	  setHeight(currentHeight);
-	}, []);
-
+	const dispatch = useAppDispatch();
+	const currentPlayer = useAppSelector((state) => state.connectFour.currentPlayer);
+	const winner = useAppSelector((state) => state.connectFour.winner);
+	const currentMatrix = useAppSelector((state) => state.connectFour.currentMatrix);
+	const history = useAppSelector((state) => state.connectFour.history);
 	return (
-		<div ref={ref} className="row">
-			<div className="col-">
+		<div>
+			<div className="flex flex-col items-center gap-2 mt-4">
+				<span className="font-bold text-xl">Turn of player {currentPlayer}</span>
+				<div className="relative">
+					{winner != 0 && (
+						<div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-white/50 rounded-lg">
+							<span className="font-bold text-4xl text-black">Player {winner} win</span>
+						</div>
+					)}
+					<div className="flex gap-2">
+						{currentMatrix.map((e, i) => {
+							return (
+								<div className="flex flex-col gap-2">
+									<FontAwesomeIcon
+										icon={faArrowCircleDown}
+										size="xl"
+										onClick={() => {
+											dispatch(insertChip({ player: currentPlayer, col: i }));
+										}}
+									/>
+									{e
+										.map((v) => (
+											<div
+												className={`w-12 h-12 rounded-full ${
+													v === 0 ? "bg-white" : v === 1 ? "bg-red-500" : "bg-blue-500"
+												}`}
+											></div>
+										))
+										.reverse()}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+				<button
+					className="bg-primary hover:bg-gray-700 text-white p-2 rounded-lg mt-4"
+					onClick={() => dispatch(newGame())}
+				>
+					{winner != 0 ? "New Game" : "Reset"}
+				</button>
+			</div>
+			<div className="border-t mt-4 p-4">
+				<span className="font-bold text-xl">History Games</span>
+				<div className="flex flex-wrap gap-2 mt-4">
+					{history.map((h) => (
+						<div className="flex flex-col items-center border p-2 rounded-lg">
+							<span className="font-bold">Player {h.winner} win</span>
+							<div className="flex gap-1 my-2">
+								{h.matrix.map((e, i) => {
+									return (
+										<div className="flex flex-col gap-1">
+											{e
+												.map((v) => (
+													<div
+														className={`w-4 h-4 rounded-full ${
+															v === 0 ? "bg-white" : v === 1 ? "bg-red-500" : "bg-blue-500"
+														}`}
+													></div>
+												))
+												.reverse()}
+										</div>
+									);
+								})}
+							</div>
+							<span>{h.date.toLocaleString()}</span>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);

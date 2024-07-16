@@ -5,7 +5,7 @@ export function ConnectFourPage() {
 	return (
 		<BaseLayout className="container px-2 pt-0 mx-auto mt-0">
 			<div className="p-2 text-center rounded-none bg-primary">
-				<h1>Connect Four 2</h1>
+				<h1>Connect Four</h1>
 			</div>
 			<ConnectFour />
 		</BaseLayout>

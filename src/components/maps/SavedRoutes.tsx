@@ -19,17 +19,17 @@ export function SavedRoutes({
 }: Readonly<Props>) {
 	const notifyCopied = () => toast("Copied to clipboard!");
 	return (
-		<div className="absolute top-12 right-0 flex flex-wrap flex-col items-end z-10 gap-2">
-			{showSavedRoutes &&
-				routes?.map((saveRoute, index) => {
+		showSavedRoutes && (
+			<div className="absolute top-12 right-0 flex flex-wrap flex-col items-end z-10 gap-2 bg-white p-2 rounded-lg">
+				{routes?.map((saveRoute, index) => {
 					return (
-						<div key={`route-${index}`} className="flex items-center">
-							<span
+						<div key={`route-${saveRoute[0].name}`} className="flex items-center">
+							<button
 								className="bg-black/50 text-white p-2 rounded-lg cursor-pointer"
 								onClick={() => onSelectSavedRoute(saveRoute)}
 							>
 								{saveRoute[0].name} to {saveRoute[saveRoute.length - 1].name}
-							</span>
+							</button>
 							<FontAwesomeIcon
 								icon={faShare}
 								size="xl"
@@ -50,6 +50,7 @@ export function SavedRoutes({
 						</div>
 					);
 				})}
-		</div>
+			</div>
+		)
 	);
 }

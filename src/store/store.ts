@@ -5,6 +5,7 @@ import AIPlaygroundReducer from "./reducers/ai/AIPlaygroundReducer";
 import { logger } from "@utils/logger";
 import ChatBotReducer from "./reducers/ai/chatBot/ChatBotReducer";
 import MapsReducer from "./reducers/MapsReducer";
+import ConnectFourReducer from "./reducers/ConnectFourReducer";
 
 const reducer = {
 	appSetting: appSettingReducer,
@@ -12,6 +13,7 @@ const reducer = {
 	aiPlayground: AIPlaygroundReducer,
 	chatBot: ChatBotReducer,
 	maps: MapsReducer,
+	connectFour: ConnectFourReducer,
 };
 
 export type RootState = StateFromReducersMapObject<typeof reducer>;
