@@ -7,6 +7,7 @@ import { useAppDispatch } from "@store/hooks";
 import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { logger } from "@utils/logger";
 
 interface Props {
 	searchValue: string;
@@ -62,7 +63,7 @@ export const Search = ({
 		const routesParam = params.get("routes");
 		if (routesParam) {
 			const tempRoutes = routesParam.split("|");
-			console.log(tempRoutes);
+			logger.info(tempRoutes);
 			initRoutes(tempRoutes);
 		}
 	}, [placesService, sessionToken]);
@@ -159,7 +160,7 @@ export const Search = ({
 			};
 
 			const detailsRequestCallback = (placeDetails: google.maps.places.PlaceResult | null) => {
-				console.log("placeDetails", placeDetails);
+				logger.info("placeDetails", placeDetails);
 				onPlaceSelect({
 					location: {
 						lat: placeDetails?.geometry?.location?.lat()!,

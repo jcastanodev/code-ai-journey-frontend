@@ -8,6 +8,7 @@ import { setFrom, setTo, setWaypoints, setMapRoutes } from "@store/reducers/Maps
 import { SavedRoutes } from "./SavedRoutes";
 import { PlaceInterface } from "@interfaces/MapsInterface";
 import { useTranslation } from "react-i18next";
+import { logger } from "@utils/logger";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
 const APP_URL = import.meta.env.VITE_APP_URL ?? "";
@@ -43,7 +44,7 @@ export function Maps() {
 				zoom: 12,
 			});
 		}
-		console.log(place);
+		logger.info(place);
 		if (editTo || toPlace === null) {
 			setEditTo(false);
 			dispatch(setTo(place));
@@ -78,7 +79,7 @@ export function Maps() {
 	};
 
 	const addWaypoint = (index: number) => {
-		console.log(index);
+		logger.info(index);
 		const tempWaypoints = waypoints.filter((element) => element !== null);
 		dispatch(setWaypoints([...tempWaypoints.slice(0, index), null, ...tempWaypoints.slice(index)]));
 		setSearchValue("");
@@ -107,7 +108,7 @@ export function Maps() {
 	};
 
 	const saveRoute = () => {
-		console.log(routes);
+		logger.info(routes);
 		dispatch(
 			setMapRoutes(
 				routes
@@ -141,7 +142,7 @@ export function Maps() {
 		const tempRoutes = routes[index];
 		let routesParam = "";
 		tempRoutes.forEach((element, index) => {
-			console.log(element);
+			logger.info(element);
 			routesParam += element.place_id + (tempRoutes.length - 1 === index ? "" : "|");
 		});
 		navigator.clipboard.writeText(`${APP_URL}/maps?routes=${routesParam}`);

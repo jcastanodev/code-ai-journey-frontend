@@ -25,5 +25,6 @@
 	"savedRoutes": "Saved Routes",
 	"distance": "Distance",
 	"duration": "Duration",
-	"otherRoutes": "Other Routes"
+	"otherRoutes": "Other Routes",
+	"to": "to"
 }

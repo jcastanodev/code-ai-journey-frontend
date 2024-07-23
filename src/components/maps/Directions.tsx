@@ -4,6 +4,7 @@ import { useAppSelector } from "@store/hooks";
 import { PlaceInterface } from "@interfaces/MapsInterface";
 import { MapsUtil } from "@utils/maps/MapsUtil";
 import { useTranslation } from "react-i18next";
+import { logger } from "@utils/logger";
 
 interface Props {
 	from: PlaceInterface | null;
@@ -32,14 +33,14 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 		newDirectionsRenderer.addListener("directions_changed", () => {
 			const directions = newDirectionsRenderer.getDirections();
 
-			console.log("directions_changed", directions);
+			logger.info("directions_changed", directions);
 		});
 		setDirectionsRenderer(newDirectionsRenderer);
 	}, [routesLibrary, map]);
 
 	// Use directions service
 	useEffect(() => {
-		console.log("update directions");
+		logger.info("update directions");
 		if (!directionsService || !directionsRenderer) return;
 		if (!from || !to) {
 			directionsRenderer.set("directions", null);
@@ -47,20 +48,20 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 			setRouteIndex(0);
 			return;
 		}
-		const waypts: google.maps.DirectionsWaypoint[] = [];
+		let tempWaypoints: google.maps.DirectionsWaypoint[] = [];
 		waypoints?.forEach((waypoint) => {
-			if (waypoint) waypts.push({ location: waypoint.location, stopover: true });
+			if (waypoint) tempWaypoints.push({ location: waypoint.location, stopover: true });
 		});
 		directionsService
 			.route({
 				origin: from?.location,
 				destination: to?.location,
-				waypoints: waypts,
+				waypoints: tempWaypoints,
 				travelMode: google.maps.TravelMode.DRIVING,
 				provideRouteAlternatives: true,
 			})
 			.then((response) => {
-				console.log("directionsService", response);
+				logger.info("directionsService", response);
 				directionsRenderer.set("directions", null);
 				directionsRenderer.setDirections(response);
 				setRoutes(response.routes);
@@ -78,12 +79,13 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 	return (
 		<div className="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-white max-h-48 overflow-y-auto">
 			<h2 className="text-white text-center mb-2">{selected.summary}</h2>
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-4 justify-center divide-x-2 divide-white">
 				{legs.map((leg) => (
-					<div key={leg.start_address}>
+					<div key={leg.start_address} className="p-1">
 						<span>
-							<a href="#">{MapsUtil.shortAddress(leg.start_address)}</a> to{" "}
-							{MapsUtil.shortAddress(leg.end_address)}
+							{`${MapsUtil.shortAddress(leg.start_address)} `}
+							<b>{t("to")}</b>
+							{` ${MapsUtil.shortAddress(leg.end_address)}`}
 						</span>
 						<p>
 							{t("distance")}: {leg.distance?.text}
@@ -94,16 +96,18 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 					</div>
 				))}
 			</div>
-			<div className="text-center">
-				<h2 className="text-white">{t("otherRoutes")}</h2>
-				<ul>
-					{routes.map((route, index) => (
-						<li key={route.summary}>
-							<button onClick={() => setRouteIndex(index)}>{route.summary}</button>
-						</li>
-					))}
-				</ul>
-			</div>
+			{routes.length > 1 && (
+				<div className="text-center">
+					<h2 className="text-white">{t("otherRoutes")}</h2>
+					<ul className="flex flex-wrap gap-2 justify-center">
+						{routes.map((route, index) => (
+							<li key={route.summary}>
+								<button onClick={() => setRouteIndex(index)}>{route.summary}</button>
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	);
 }
