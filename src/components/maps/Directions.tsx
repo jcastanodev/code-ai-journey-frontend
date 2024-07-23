@@ -3,12 +3,14 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useAppSelector } from "@store/hooks";
 import { PlaceInterface } from "@interfaces/MapsInterface";
 import { MapsUtil } from "@utils/maps/MapsUtil";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	from: PlaceInterface | null;
 	to: PlaceInterface | null;
 }
 export function Directions({ from = null, to = null }: Readonly<Props>) {
+	const { t } = useTranslation();
 	const waypoints = useAppSelector((state) => state.maps.currentRoute!.waypoints);
 	const map = useMap();
 	const routesLibrary = useMapsLibrary("routes");
@@ -83,13 +85,17 @@ export function Directions({ from = null, to = null }: Readonly<Props>) {
 							<a href="#">{MapsUtil.shortAddress(leg.start_address)}</a> to{" "}
 							{MapsUtil.shortAddress(leg.end_address)}
 						</span>
-						<p>Distance: {leg.distance?.text}</p>
-						<p>Duration: {leg.duration?.text}</p>
+						<p>
+							{t("distance")}: {leg.distance?.text}
+						</p>
+						<p>
+							{t("duration")}: {leg.duration?.text}
+						</p>
 					</div>
 				))}
 			</div>
 			<div className="text-center">
-				<h2 className="text-white">Other Routes</h2>
+				<h2 className="text-white">{t("otherRoutes")}</h2>
 				<ul>
 					{routes.map((route, index) => (
 						<li key={route.summary}>

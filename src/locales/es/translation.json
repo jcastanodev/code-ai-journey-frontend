@@ -18,5 +18,12 @@
 	"win": "Gano",
 	"newGame": "Nuevo Juego",
 	"reset": "Restablecer",
-	"historyGames": "Historial de juegos"
+	"historyGames": "Historial de juegos",
+	"searchAPlace": "¿Buscar un lugar?",
+	"loadedSharedRoute": "Ruta compartida cargada!",
+	"cantLoadSharedRoute": "No se pudo cargar la ruta compartida!",
+	"savedRoutes": "Rutas guardadas",
+	"distance": "Distancia",
+	"duration": "Duración",
+	"otherRoutes": "Otras rutas"
 }

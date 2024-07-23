@@ -7,11 +7,13 @@ import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setFrom, setTo, setWaypoints, setMapRoutes } from "@store/reducers/MapsReducer";
 import { SavedRoutes } from "./SavedRoutes";
 import { PlaceInterface } from "@interfaces/MapsInterface";
+import { useTranslation } from "react-i18next";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
 const APP_URL = import.meta.env.VITE_APP_URL ?? "";
 
 export function Maps() {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const INITIAL_CAMERA = {
 		center: { lat: 4.7, lng: -74.063644 },
@@ -168,7 +170,7 @@ export function Maps() {
 					<Search
 						searchValue={searchValue}
 						setSearchValue={setSearchValue}
-						placeholder={"Search a place?"}
+						placeholder={t("searchAPlace")}
 						onPlaceSelect={onPlaceSelect}
 						showSavedRoutes={showSavedRoutes}
 						toggleShowSavedRoutes={() => {

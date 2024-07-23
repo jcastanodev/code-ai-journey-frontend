@@ -6,6 +6,7 @@ import { PlaceInterface } from "@interfaces/MapsInterface";
 import { useAppDispatch } from "@store/hooks";
 import { setFrom, setTo, setWaypoints } from "@store/reducers/MapsReducer";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	searchValue: string;
@@ -25,9 +26,10 @@ export const Search = ({
 	toggleShowSavedRoutes,
 	routes,
 }: Props) => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const notifyUrlParamSuccess = () => toast.info("Load shared route!", { autoClose: 3000 });
-	const notifyUrlParamError = () => toast.error("Can't load shared route!", { autoClose: 3000 });
+	const notifyUrlParamSuccess = () => toast.info(t("loadedSharedRoute"), { autoClose: 3000 });
+	const notifyUrlParamError = () => toast.error(t("cantLoadSharedRoute"), { autoClose: 3000 });
 	const map = useMap();
 	const places = useMapsLibrary("places");
 
@@ -214,7 +216,9 @@ export const Search = ({
 					{showSavedRoutes && (
 						<FontAwesomeIcon icon={faCaretDown} size="xl" className="text-white" />
 					)}
-					<span className="ml-2">Saved Routes ({routes?.length ?? 0})</span>
+					<span className="ml-2">
+						{t("savedRoutes")} ({routes?.length ?? 0})
+					</span>
 				</button>
 			</div>
 		</div>
