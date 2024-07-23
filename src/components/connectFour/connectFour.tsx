@@ -2,8 +2,10 @@ import { faArrowCircleDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { insertChip, newGame } from "@store/reducers/ConnectFourReducer";
+import { useTranslation } from "react-i18next";
 
 export function ConnectFour() {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const currentPlayer = useAppSelector((state) => state.connectFour.currentPlayer);
 	const winner = useAppSelector((state) => state.connectFour.winner);
@@ -12,11 +14,15 @@ export function ConnectFour() {
 	return (
 		<div>
 			<div className="flex flex-col items-center gap-2 mt-4">
-				<span className="font-bold text-xl">Turn of player {currentPlayer}</span>
+				<span className="font-bold text-xl">
+					{t("turnOfPlayer")} {currentPlayer}
+				</span>
 				<div className="relative">
 					{winner != 0 && (
 						<div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-white/50 rounded-lg">
-							<span className="font-bold text-4xl text-black">Player {winner} win</span>
+							<span className="font-bold text-4xl text-black">
+								{t("player")} {winner} {t("win")}
+							</span>
 						</div>
 					)}
 					<div className="flex gap-2">
@@ -49,18 +55,20 @@ export function ConnectFour() {
 					className="bg-primary hover:bg-gray-700 text-white p-2 rounded-lg mt-4"
 					onClick={() => dispatch(newGame())}
 				>
-					{winner != 0 ? "New Game" : "Reset"}
+					{winner != 0 ? t("newGame") : t("reset")}
 				</button>
 			</div>
 			<div className="border-t mt-4 p-4">
-				<span className="font-bold text-xl">History Games</span>
+				<span className="font-bold text-xl">{t("historyGames")}</span>
 				<div className="flex flex-wrap gap-2 mt-4">
 					{history.map((h) => (
 						<div
 							key={`history-${h.date.toString()}`}
 							className="flex flex-col items-center border p-2 rounded-lg"
 						>
-							<span className="font-bold">Player {h.winner} win</span>
+							<span className="font-bold">
+								{t("player")} {h.winner} {t("win")}
+							</span>
 							<div className="flex gap-1 my-2">
 								{h.matrix.map((e, i1) => {
 									return (

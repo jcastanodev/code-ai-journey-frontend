@@ -3,5 +3,20 @@
 	"explore": "Explorar",
 	"account": "Cuenta",
 	"welcomeMessage": "Bienvenido a CodeAIJourney, donde comienza el viaje de exploración en el mundo de la inteligencia artificial. Somos una iniciativa pionera dedicada a desentrañar los misterios y las infinitas posibilidades de la IA. Nuestro objetivo es ofrecer soluciones innovadoras de IA, compartir conocimientos a través del aprendizaje interactivo y conectar a entusiastas y profesionales a través de una red global.",
-	"tools": "Herramientas"
+	"tools": "Herramientas",
+	"homePage": "Página principal",
+	"goToBusiness": "Ir a negocios",
+	"goToChatBot": "Ir a ChatBot",
+	"yourChatBots": "Tus ChatBots",
+	"newChatBot": "Nuevo ChatBot",
+	"whatWantChatbot": "Que quieres con tu ChatBot",
+	"uploadFileForFAQ": "Para configurar el ChatBot, por favor sube un archivo PDF con las FAQs",
+	"uploadPDF": "subir PDF",
+	"connectFour": "Conecta cuatro",
+	"turnOfPlayer": "Turno del jugador",
+	"player": "Jugador",
+	"win": "Gano",
+	"newGame": "Nuevo Juego",
+	"reset": "Restablecer",
+	"historyGames": "Historial de juegos"
 }
