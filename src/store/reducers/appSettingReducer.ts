@@ -16,11 +16,11 @@ export const appSettingSlice = createSlice({
 	initialState,
 	reducers: {
 		toogleDarkMode: (state) => {
-			logger.debug("toogleDarkMode");
+			logger.info("toogleDarkMode");
 			state.isDarkMode = !state.isDarkMode;
 		},
 		setDarkMode: (state, action: PayloadAction<boolean>) => {
-			logger.debug("setDarkMode to ", action.payload);
+			logger.info("setDarkMode to ", action.payload);
 			state.isDarkMode = action.payload;
 		},
 	},

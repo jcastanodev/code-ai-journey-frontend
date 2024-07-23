@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { ChangeEvent, MouseEvent, useState } from "react";
 import { ChatBotCategories } from "@interfaces/chatbot/ChatBotInterface";
+import { logger } from "@utils/logger";
 
 const VisuallyHiddenInput = styled("input")({
 	clip: "rect(0 0 0 0)",
@@ -74,13 +75,13 @@ export function NewChatBot({ onClose }: Props) {
 								<VisuallyHiddenInput
 									type="file"
 									onChange={(event: ChangeEvent<HTMLInputElement>) => {
-										console.log(event);
+										logger.info(event);
 										const files = (event.target as HTMLInputElement).files;
 										if (files && files.length > 0) {
 											var reader = new FileReader();
 											reader.readAsDataURL(files[0]);
 											reader.onload = () => {
-												console.log(reader.result);
+												logger.info(reader.result);
 												setPDFFile(reader.result as string);
 											};
 										}

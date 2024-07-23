@@ -19,10 +19,10 @@ export const customEntitySlice = createSlice({
 	initialState,
 	reducers: {
 		fetch: (state, action: PayloadAction<CustomEntityInterface>) => {
-			logger.debug("fetch: ", action.payload.name);
+			logger.info("fetch: ", action.payload.name);
 		},
 		create: (state) => {
-			logger.debug("create: ");
+			logger.info("create: ");
 		},
 	},
 });

@@ -24,7 +24,7 @@ export const ConnectFourSlice = createSlice({
     initialState,
     reducers: {
         insertChip: (state, action: PayloadAction<InsertChipInterface>) => {
-            logger.debug("insertChip: ", action.payload);
+            logger.info("insertChip: ", action.payload);
             for (let index = 0; index < state.currentMatrix[action.payload.col].length; index++) {
                 const value = state.currentMatrix[action.payload.col][index];
                 if (value === 0) {
@@ -36,7 +36,7 @@ export const ConnectFourSlice = createSlice({
             state.winner = getWinner(state.currentMatrix);
         },
         newGame: (state, action: PayloadAction<void>) => {
-            logger.debug("newGame");
+            logger.info("newGame");
             if (state.winner !== 0) {
                 state.history = [...state.history, {
                     winner: state.winner,

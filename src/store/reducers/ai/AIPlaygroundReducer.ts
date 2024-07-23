@@ -11,7 +11,7 @@ export const AIPlaygroundSlice = createSlice({
     initialState,
     reducers: {
         setApiKey: (state, action: PayloadAction<string>) => {
-            logger.debug("setApiKey: ", action.payload);
+            logger.info("setApiKey: ", action.payload);
             state.apiKey = action.payload;
         },
     },

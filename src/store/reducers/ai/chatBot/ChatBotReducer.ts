@@ -12,19 +12,19 @@ export const ChatBotSlice = createSlice({
     initialState,
     reducers: {
         setHistory: (state, action: PayloadAction<ChatBotMessageInterface[]>) => {
-            logger.debug("setHistory: ", action.payload);
+            logger.info("setHistory: ", action.payload);
             state.history = action.payload;
         },
         addMessage: (state, action: PayloadAction<ChatBotMessageInterface>) => {
-            logger.debug("addMessage: ", action.payload);
+            logger.info("addMessage: ", action.payload);
             state.history = [...state.history, action.payload];
         },
         setCurrentTemplate: (state, action: PayloadAction<ChatBotTemplateInterface | undefined>) => {
-            logger.debug("setCurrentTemplate: ", action.payload);
+            logger.info("setCurrentTemplate: ", action.payload);
             state.currentTemplate = action.payload;
         },
         setCurrentTemplateByName: (state, action: PayloadAction<string>) => {
-            logger.debug("setCurrentTemplate: ", action.payload);
+            logger.info("setCurrentTemplate: ", action.payload);
             const newCurrentTemplate = state.templates.find((template) => template.name === action.payload);
             if (newCurrentTemplate) {
                 state.currentTemplate = newCurrentTemplate;
@@ -33,11 +33,11 @@ export const ChatBotSlice = createSlice({
             }
         },
         setTemplates: (state, action: PayloadAction<ChatBotTemplateInterface[]>) => {
-            logger.debug("setTemplates: ", action.payload);
+            logger.info("setTemplates: ", action.payload);
             state.templates = action.payload;
         },
         addTemplate: (state, action: PayloadAction<ChatBotTemplateInterface>) => {
-            logger.debug("addTemplate: ", action.payload);
+            logger.info("addTemplate: ", action.payload);
             state.templates = [...state.templates, action.payload];
         },
     },

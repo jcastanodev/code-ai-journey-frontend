@@ -48,7 +48,12 @@ export function DigitalSign() {
 					<h1>Digital Sign</h1>
 				</div>
 			</form>
-			<DynamicForm formFields={[{ name: 'Name', type: 'text', required: true }]} onSubmit={(event) => { console.log(event) }} />
+			<DynamicForm
+				formFields={[{ name: "Name", type: "text", required: true }]}
+				onSubmit={(event) => {
+					logger.info(event);
+				}}
+			/>
 		</>
 	);
 }

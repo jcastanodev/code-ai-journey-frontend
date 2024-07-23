@@ -23,7 +23,7 @@ export const accountSlice = createSlice({
 	initialState,
 	reducers: {
 		signInAccount: (state, action: PayloadAction<SignInRequestInterface>) => {
-			logger.debug("signIn account: ", action.payload.email);
+			logger.info("signIn account: ", action.payload.email);
 			// use user and password to sign in
 			state.token = "token";
 			state.isLogged = true;
@@ -32,14 +32,14 @@ export const accountSlice = createSlice({
 			};
 		},
 		saveDiscordAccount: (state, action: PayloadAction<DiscordAccountInterface>) => {
-			logger.debug("saveDiscord on account: ", action.payload.code);
+			logger.info("saveDiscord on account: ", action.payload.code);
 			state.discord = {
 				code: action.payload.code,
 				guild_id: action.payload.guild_id,
 			};
 		},
 		logoutAccount: (state) => {
-			logger.debug("logout account");
+			logger.info("logout account");
 			state.token = "";
 			state.isLogged = false;
 			state.data = undefined;

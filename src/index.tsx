@@ -11,6 +11,9 @@ import { saveState, store } from "./store/store";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { logger } from "@utils/logger";
+
+logger.info("Application info");
 
 store.subscribe(() => saveState(store.getState()));
 

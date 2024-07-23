@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { addMessage, setCurrentTemplate, setCurrentTemplateByName, setHistory } from "@store/reducers/ai/chatBot/ChatBotReducer";
 import { CustomSelect } from "@components/common/material-ui/CustomSelect";
+import { logger } from "@utils/logger";
 
 export function Tattoo() {
     const apiKey = useAppSelector((state) => state.aiPlayground.apiKey);
@@ -32,7 +33,7 @@ export function Tattoo() {
             prompt: `tattoo on ${bodyPart}`,
         });
 
-        console.log(response);
+        logger.info(response);
 
         setGeneratedImage(response.data.data[0].url);
     };

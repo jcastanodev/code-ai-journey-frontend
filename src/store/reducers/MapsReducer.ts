@@ -16,19 +16,19 @@ export const MapsSlice = createSlice({
     initialState,
     reducers: {
         setFrom: (state, action: PayloadAction<google.maps.places.PlaceResult | null>) => {
-            logger.debug("setFrom: ", action.payload);
+            logger.info("setFrom: ", action.payload);
             state.currentRoute!.from = action.payload;
         },
         setTo: (state, action: PayloadAction<google.maps.places.PlaceResult | null>) => {
-            logger.debug("setTo: ", action.payload);
+            logger.info("setTo: ", action.payload);
             state.currentRoute!.to = action.payload;
         },
         setWaypoints: (state, action: PayloadAction<(google.maps.places.PlaceResult | null)[]>) => {
-            logger.debug("setWaypoints: ", action.payload);
+            logger.info("setWaypoints: ", action.payload);
             state.currentRoute!.waypoints = action.payload;
         },
         setMapRoutes: (state, action: PayloadAction<(google.maps.places.PlaceResult[])[]>) => {
-            logger.debug("setMapRoutes: ", action.payload);
+            logger.info("setMapRoutes: ", action.payload);
             state.currentRoute!.routes = action.payload;
         },
     },
