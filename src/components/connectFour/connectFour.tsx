@@ -20,22 +20,23 @@ export function ConnectFour() {
 						</div>
 					)}
 					<div className="flex gap-2">
-						{currentMatrix.map((e, i) => {
+						{currentMatrix.map((e, i1) => {
 							return (
-								<div className="flex flex-col gap-2">
+								<div key={`current-col-${i1}-${e[i1]}`} className="flex flex-col gap-2">
 									<FontAwesomeIcon
 										icon={faArrowCircleDown}
 										size="xl"
 										onClick={() => {
-											dispatch(insertChip({ player: currentPlayer, col: i }));
+											dispatch(insertChip({ player: currentPlayer, col: i1 }));
 										}}
 									/>
 									{e
-										.map((v) => (
+										.map((v, i2) => (
 											<div
-												className={`w-12 h-12 rounded-full ${
-													v === 0 ? "bg-white" : v === 1 ? "bg-red-500" : "bg-blue-500"
-												}`}
+												key={`current-col-${i1}-row-${i2}`}
+												className={`w-12 h-12 rounded-full ${v === 0 ? "bg-white" : ""} ${
+													v === 1 ? "bg-red-500" : ""
+												} ${v === 2 ? "bg-blue-500" : ""}`}
 											></div>
 										))
 										.reverse()}
@@ -55,18 +56,22 @@ export function ConnectFour() {
 				<span className="font-bold text-xl">History Games</span>
 				<div className="flex flex-wrap gap-2 mt-4">
 					{history.map((h) => (
-						<div className="flex flex-col items-center border p-2 rounded-lg">
+						<div
+							key={`history-${h.date.toString()}`}
+							className="flex flex-col items-center border p-2 rounded-lg"
+						>
 							<span className="font-bold">Player {h.winner} win</span>
 							<div className="flex gap-1 my-2">
-								{h.matrix.map((e, i) => {
+								{h.matrix.map((e, i1) => {
 									return (
-										<div className="flex flex-col gap-1">
+										<div key={`history-col-${i1}-${e[i1]}`} className="flex flex-col gap-1">
 											{e
-												.map((v) => (
+												.map((v, i2) => (
 													<div
-														className={`w-4 h-4 rounded-full ${
-															v === 0 ? "bg-white" : v === 1 ? "bg-red-500" : "bg-blue-500"
-														}`}
+														key={`history-col-${i1}-row-${i2}`}
+														className={`w-4 h-4 rounded-full ${v === 0 ? "bg-white" : ""} ${
+															v === 1 ? "bg-red-500" : ""
+														} ${v === 2 ? "bg-blue-500" : ""}`}
 													></div>
 												))
 												.reverse()}
